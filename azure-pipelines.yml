@@ -21,7 +21,7 @@ variables:
 stages:
 
 # =====================================================================
-# STAGE 1: PR — init + validate + plan (без apply)
+# STAGE 1: PR — init + validate + plan
 # =====================================================================
 - stage: PR_Checks
   displayName: 'PR — Init, Validate, Plan'
@@ -61,7 +61,7 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
 
 # =====================================================================
-# STAGE 2: MAIN — init + validate + apply (без plan окремо)
+# STAGE 2: MAIN — init + validate + apply
 # =====================================================================
 - stage: Deploy
   displayName: 'Main — Init, Validate, Apply'
