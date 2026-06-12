@@ -25,6 +25,7 @@ stages:
 # =====================================================================
 - stage: PR_Checks
   displayName: 'PR — Init, Validate, Plan'
+  dependsOn: [] # Робимо стейдж повністю незалежним від інших
   condition: eq(variables['Build.Reason'], 'PullRequest')
   jobs:
   - job: PR_Job
@@ -65,7 +66,8 @@ stages:
 # =====================================================================
 - stage: Deploy
   displayName: 'Main — Init, Validate, Apply'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
+  dependsOn: []
+  condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - job: Deploy_Job
     displayName: 'Terraform Deploy'
