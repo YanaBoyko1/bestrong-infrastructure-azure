@@ -36,7 +36,7 @@ stages:
       inputs:
         terraformVersion: '1.9.0'
 
-    - task: TerraformTaskV4@0
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Init'
       inputs:
         provider: 'azurerm'
@@ -47,13 +47,13 @@ stages:
         backendAzureRmContainerName: '$(backendContainer)'
         backendAzureRmKey: '$(backendKey)'
 
-    - task: TerraformTaskV4
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Validate'
       inputs:
         provider: 'azurerm'
         command: 'validate'
 
-    - task: TerraformTaskV4
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Plan'
       inputs:
         provider: 'azurerm'
@@ -76,7 +76,7 @@ stages:
       inputs:
         terraformVersion: '1.9.0'
 
-    - task: TerraformTaskV4
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Init'
       inputs:
         provider: 'azurerm'
@@ -87,13 +87,13 @@ stages:
         backendAzureRmContainerName: '$(backendContainer)'
         backendAzureRmKey: '$(backendKey)'
 
-    - task: TerraformTaskV4
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Validate'
       inputs:
         provider: 'azurerm'
         command: 'validate'
 
-    - task: TerraformTaskV4
+    - task: TerraformTaskV4@4
       displayName: 'Terraform Apply'
       inputs:
         provider: 'azurerm'
