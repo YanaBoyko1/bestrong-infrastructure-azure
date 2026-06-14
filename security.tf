@@ -12,18 +12,14 @@ resource "random_password" "sql_password" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = "kv-${var.project_name}-001"
-  location                    = var.location
-  resource_group_name         = azurerm_resource_group.rg.name
-  enabled_for_disk_encryption = true
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  sku_name                    = "standard"
-  purge_protection_enabled    = true
-
-  # Key enters "soft delete" state and can be recovered.
-  # Dynamic retention period from variables (90 days)
+  name                          = "kv-${var.project_name}-001"
+  location                      = var.location
+  resource_group_name           = azurerm_resource_group.rg.name
+  enabled_for_disk_encryption   = true
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  sku_name                      = "standard"
+  purge_protection_enabled      = true
   soft_delete_retention_days    = var.kv_soft_delete_retention_days
-  
   public_network_access_enabled = true
 
   network_acls {
@@ -31,15 +27,16 @@ resource "azurerm_key_vault" "kv" {
     bypass         = "AzureServices"
     ip_rules       = ["${var.terraform_client_ip}/32"]
   }
+}
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
+resource "azurerm_key_vault_access_policy" "deploy_agent_policy" {
+  key_vault_id = azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
 
-    secret_permissions = [
-      "Get", "Set", "List", "Delete", "Purge", "Recover"
-    ]
-  }
+  secret_permissions = [
+    "Get", "Set", "List", "Delete", "Purge", "Recover"
+  ]
 }
 
 resource "azurerm_key_vault_access_policy" "app_kv_policy" {
@@ -59,6 +56,7 @@ resource "azurerm_key_vault_secret" "sql_pass_secret" {
 
   depends_on = [
     azurerm_private_endpoint.pe_kv,
+    azurerm_key_vault_access_policy.deploy_agent_policy,
     azurerm_key_vault_access_policy.app_kv_policy
   ]
 }
@@ -70,6 +68,7 @@ resource "azurerm_key_vault_secret" "storage_key" {
 
   depends_on = [
     azurerm_private_endpoint.pe_kv,
+    azurerm_key_vault_access_policy.deploy_agent_policy,
     azurerm_key_vault_access_policy.app_kv_policy
   ]
 }
