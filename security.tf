@@ -23,7 +23,7 @@ resource "azurerm_key_vault" "kv" {
   public_network_access_enabled = true
 
   network_acls {
-    default_action = "Deny"
+    default_action = "Allow" 
     bypass         = "AzureServices"
     ip_rules       = ["${var.terraform_client_ip}/32"]
   }
