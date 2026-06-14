@@ -1,0 +1,111 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureServiceConnection: 'bestrong-azure-service-principal'
+  backendRG: 'rg-terraform-meta'
+  backendSA: 'stbestrongtfstate'
+  backendContainer: 'tfstate'
+  backendKey: 'bestrong.terraform.tfstate'
+  TF_VERSION: '1.9.0'
+
+stages:
+- stage: PR_Checks
+  displayName: 'PR — Init, Validate, Plan'
+  dependsOn: []
+  condition: eq(variables['Build.Reason'], 'PullRequest')
+  jobs:
+  - job: PR_Job
+    displayName: 'Terraform PR Checks'
+    steps:
+
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: $(TF_VERSION)
+
+    - script: |
+        AGENT_IP=$(curl -s https://api.ipify.org)
+        echo "##vso[task.setvariable variable=TF_AGENT_IP]$AGENT_IP"
+      displayName: 'Fetch Agent Public IP'
+
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: '$(azureServiceConnection)'
+        backendAzureRmResourceGroupName: '$(backendRG)'
+        backendAzureRmStorageAccountName: '$(backendSA)'
+        backendAzureRmContainerName: '$(backendContainer)'
+        backendAzureRmKey: '$(backendKey)'
+
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Validate'
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-var="terraform_client_ip=$(TF_AGENT_IP)"'
+        environmentServiceNameAzureRM: '$(azureServiceConnection)'
+
+
+- stage: Deploy
+  displayName: 'Main — Init, Validate, Apply'
+  dependsOn: []
+  condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - job: Deploy_Job
+    displayName: 'Terraform Deploy'
+    steps:
+
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: $(TF_VERSION)
+
+    # Get agent IP before deployment
+    - script: |
+        AGENT_IP=$(curl -s https://api.ipify.org)
+        echo "##vso[task.setvariable variable=TF_AGENT_IP]$AGENT_IP"
+      displayName: 'Fetch Agent Public IP'
+
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: '$(azureServiceConnection)'
+        backendAzureRmResourceGroupName: '$(backendRG)'
+        backendAzureRmStorageAccountName: '$(backendSA)'
+        backendAzureRmContainerName: '$(backendContainer)'
+        backendAzureRmKey: '$(backendKey)'
+
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Validate'
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+
+    - task: TerraformTaskV4@4
+      displayName: 'Terraform Apply'
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        commandOptions: '-auto-approve -var="terraform_client_ip=$(TF_AGENT_IP)"'
+        environmentServiceNameAzureRM: '$(azureServiceConnection)'
