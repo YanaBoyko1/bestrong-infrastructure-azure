@@ -1,5 +1,4 @@
 trigger:
-  batch: true
   branches:
     include:
       - main
@@ -18,15 +17,12 @@ variables:
   backendSA: 'stbestrongtfstate'
   backendContainer: 'tfstate'
   backendKey: 'bestrong.terraform.tfstate'
+  TF_VERSION: '1.9.0'
 
 stages:
-
-# =====================================================================
-# STAGE 1: PR — init + validate + plan
-# =====================================================================
 - stage: PR_Checks
   displayName: 'PR — Init, Validate, Plan'
-  dependsOn: [] # Робимо стейдж повністю незалежним від інших
+  dependsOn: []
   condition: eq(variables['Build.Reason'], 'PullRequest')
   jobs:
   - job: PR_Job
@@ -36,7 +32,12 @@ stages:
     - task: TerraformInstaller@1
       displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.9.0'
+        terraformVersion: $(TF_VERSION)
+
+    - script: |
+        AGENT_IP=$(curl -s https://api.ipify.org)
+        echo "##vso[task.setvariable variable=TF_AGENT_IP]$AGENT_IP"
+      displayName: 'Fetch Agent Public IP'
 
     - task: TerraformTaskV4@4
       displayName: 'Terraform Init'
@@ -60,11 +61,10 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
+        commandOptions: '-var="terraform_client_ip=$(TF_AGENT_IP)"'
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
 
-# =====================================================================
-# STAGE 2: MAIN — init + validate + apply
-# =====================================================================
+
 - stage: Deploy
   displayName: 'Main — Init, Validate, Apply'
   dependsOn: []
@@ -77,7 +77,13 @@ stages:
     - task: TerraformInstaller@1
       displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.9.0'
+        terraformVersion: $(TF_VERSION)
+
+    # Get agent IP before deployment
+    - script: |
+        AGENT_IP=$(curl -s https://api.ipify.org)
+        echo "##vso[task.setvariable variable=TF_AGENT_IP]$AGENT_IP"
+      displayName: 'Fetch Agent Public IP'
 
     - task: TerraformTaskV4@4
       displayName: 'Terraform Init'
@@ -101,5 +107,5 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'apply'
-        commandOptions: '-auto-approve'
+        commandOptions: '-auto-approve -var="terraform_client_ip=$(TF_AGENT_IP)"'
         environmentServiceNameAzureRM: '$(azureServiceConnection)'
