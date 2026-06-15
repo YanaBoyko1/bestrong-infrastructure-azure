@@ -13,7 +13,7 @@
 - [Azure Resources](#azure-resources)
 - [Getting Started](#getting-started)
 - [Remote State](#remote-state)
-- [CI/CD schemee](#ci/cd-scheme)
+- [CI/CD scheme](#ci/cd-scheme)
 
 ---
 
