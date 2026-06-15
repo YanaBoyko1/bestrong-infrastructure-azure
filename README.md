@@ -13,6 +13,7 @@
 - [Azure Resources](#azure-resources)
 - [Getting Started](#getting-started)
 - [Remote State](#remote-state)
+- [CI/CD schemee](#ci/cd-scheme)
 
 ---
 
@@ -274,5 +275,10 @@ This ensures:
 - State is not lost if your laptop is wiped
 - Team members share the same state
 - State file is versioned (blob versioning enabled)
+
+---
+
+## CI/CD scheme
+<img width="1322" height="1161" alt="Untitled Diagram-Page-1 drawio" src="https://github.com/user-attachments/assets/5866196e-5cd1-44a9-8a44-d8787b362e2d" />
 
 ---
