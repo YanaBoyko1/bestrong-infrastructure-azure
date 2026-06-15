@@ -44,7 +44,6 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        commandOptions: '-upgrade'
         backendServiceArm: '$(azureServiceConnection)'
         backendAzureRmResourceGroupName: '$(backendRG)'
         backendAzureRmStorageAccountName: '$(backendSA)'
@@ -91,7 +90,6 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        commandOptions: '-upgrade'
         backendServiceArm: '$(azureServiceConnection)'
         backendAzureRmResourceGroupName: '$(backendRG)'
         backendAzureRmStorageAccountName: '$(backendSA)'
