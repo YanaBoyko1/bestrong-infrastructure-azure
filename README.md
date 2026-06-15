@@ -4,7 +4,7 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Project Requirements](#project-requirements)
 - [Architecture Overview](#architecture-overview)
@@ -13,7 +13,7 @@
 - [Azure Resources](#azure-resources)
 - [Getting Started](#getting-started)
 - [Remote State](#remote-state)
-- [CI/CD scheme](#ci/cd-scheme)
+- [CI/CD scheme](#cicd-scheme)
 
 ---
 
