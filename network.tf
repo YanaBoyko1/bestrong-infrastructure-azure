@@ -45,12 +45,13 @@ resource "azurerm_network_security_rule" "deny_internet_inbound" {
 
 module "avm-res-network-virtualnetwork" {
   source = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.2.4" 
+  version = "~> 0.7"
 
   address_space = ["10.0.0.0/16"]
   location      = azurerm_resource_group.rg.location
   name          = "vnet-bestrong-001"
   parent_id     = azurerm_resource_group.rg.id
+  ipam_pools = {}
 
   subnets = {
     "subnet1" = {
