@@ -1,34 +1,34 @@
 output "web_app_url" {
-  description = "Публічна URL-адреса Web App (для відкриття в браузері)"
+  description = "Public URL of the Web App (to open in a browser)"
   value       = "https://${azurerm_linux_web_app.web_app.default_hostname}"
 }
 
 output "acr_login_server" {
-  description = "Адреса ACR для docker push/pull у CI/CD пайплайні"
+  description = "ACR address for docker push/pull in the CI/CD pipeline"
   value       = azurerm_container_registry.acr.login_server
 }
 
 output "sql_server_fqdn" {
-  description = "Повна доменна адреса SQL Server для рядка підключення"
+  description = "Fully qualified domain name of the SQL Server for the connection string"
   value       = azurerm_mssql_server.sql_server.fully_qualified_domain_name
 }
 
 output "storage_account_name" {
-  description = "Назва Storage Account"
+  description = "Storage Account name"
   value       = azurerm_storage_account.storage.name
 }
 
 output "storage_share_name" {
-  description = "Назва File Share всередині Storage Account"
+  description = "File Share name within the Storage Account"
   value       = azurerm_storage_share.user_files.name
 }
 
 output "key_vault_uri" {
-  description = "URI Key Vault для ручного читання секретів через CLI"
+  description = "Key Vault URI for manually reading secrets via CLI"
   value       = azurerm_key_vault.kv.vault_uri
 }
 
 output "key_vault_id" {
-  description = "ID Key Vault (для додавання нових access policy)"
+  description = "Key Vault ID (for adding new access policies)"
   value       = azurerm_key_vault.kv.id
 }
