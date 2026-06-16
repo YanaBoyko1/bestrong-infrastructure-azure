@@ -45,7 +45,7 @@ resource "azurerm_network_security_rule" "deny_internet_inbound" {
 
 module "avm-res-network-virtualnetwork" {
   source = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "~> 0.7"
+  version ="0.13.0"
 
   address_space = ["10.0.0.0/16"]
   location      = azurerm_resource_group.rg.location
