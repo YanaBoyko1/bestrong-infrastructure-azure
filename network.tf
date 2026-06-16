@@ -51,7 +51,6 @@ module "avm-res-network-virtualnetwork" {
   location      = azurerm_resource_group.rg.location
   name          = "vnet-bestrong-001"
   parent_id     = azurerm_resource_group.rg.id
-  ipam_pools = {}
 
   subnets = {
     "subnet1" = {
